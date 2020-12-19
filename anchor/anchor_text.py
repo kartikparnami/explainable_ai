@@ -36,6 +36,17 @@ class AnchorExplanation:
             names = names[: partial_index + 1]
         return names
 
+    def features(self, partial_index=None):
+        """
+        Returns a list of the features used in the anchor conditions.
+        Args:
+            partial_index (int): lets you get the anchor until a certain index.
+        """
+        features = self.exp_map['feature']
+        if partial_index is not None:
+            features = features[:partial_index + 1]
+        return features
+
     def examples(
         self,
         only_different_prediction=False,
