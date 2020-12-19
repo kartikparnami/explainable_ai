@@ -1,4 +1,8 @@
 # explainable_ai
+By Kartik Parnami (kp2844) and Michelle Maria Roy (mr3966)
+Final Project for COMS6998 Practical Deep Learning Systems Performance Fall 2020
+
+
 A consolidated Python library which works with models of the user’s choice as part of their training or prediction functions to explain predictions of both text based and image based deep network models specific to classification.
 We hope to help remove the black box element from Deep Learning models built to scale with high levels of accuracy by explaining their predictions.
 
