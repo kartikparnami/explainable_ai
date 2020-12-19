@@ -215,7 +215,6 @@ class AnchorText(object):
         self.class_names = class_names
         self.use_unk_distribution = True
         self.tg = None
-        self.neighbors = Neighbors(self.nlp)
         self.mask_string = mask_string
         self.stopwords = stopwords.words("english") + list(string.punctuation)
 

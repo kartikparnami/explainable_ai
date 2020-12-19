@@ -141,7 +141,11 @@ def _sum_integral_terms(step_sizes, grads):
     if isinstance(grads, tf.Tensor):
         step_sizes = tf.convert_to_tensor(step_sizes)
     einstr = "a,a{}->{}".format(input_str, input_str)
-    sums = tf.einsum(einstr, step_sizes, grads)
+    sums = (
+        tf.einsum(einstr, step_sizes, grads)
+        if isinstance(grads, tf.Tensor)
+        else np.einsum(einstr, step_sizes, grads)
+    )
     return sums.numpy() if isinstance(grads, tf.Tensor) else sums
 
 
