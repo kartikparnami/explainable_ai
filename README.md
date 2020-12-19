@@ -49,19 +49,24 @@ Note: Integrated gradients technique requires to pass the TensorFlow model itsel
 
 Examples of usage of each of these methods can be found in examples/ folder in jupyter notebooks.
 
-Sample image explanations:
+#### Sample image explanations:
 
+##### Anchor Image Explanation
 ![Anchor Image Explanation](images/AnchorImage.png "Anchor Image Explanation")
 
+##### Counterfactual Image Explanation
 ![Counterfactual Image Explanation](images/LCImage.png "Counterfactual Image Explanation")
 
+##### Integrated Gradients Image Explanation
 ![Integrated Gradients Image Explanation](images/IGImage.png "Integrated Gradients Image Explanation")
 
 Sample text explanations:
 
+##### Anchor Text Explanation
 ![Anchor Text Explanation](images/AnchorText.png "Anchor Text Explanation")
 
+##### Counterfactual Text Explanation
 ![Counterfactual Text Explanation](images/LCText.png "Counterfactual Text Explanation")
 
+##### Integrated Gradients Text Explanation
 ![Integrated Gradients Text Explanation](images/IGText.png "Integrated Gradients Text Explanation")
-
