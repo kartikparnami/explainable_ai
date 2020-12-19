@@ -4,39 +4,45 @@ import tensorflow as tf
 
 
 class IntegratedGradientsImage(object):
+    def __init__(
+        self,
+        num_bright_image_variants=15,
+        num_interpolations=100,
+        min_brightness_increase=0.4,
+        max_brightness_increase=0.7,
+    ):
+        """
+        An implementation of Integrated gradients method for Tensorflow/Keras image models.
+        For details of the method see the original paper:
+        https://arxiv.org/abs/1703.01365 .
 
-    def __init__(self,
-                 num_bright_image_variants=15,
-                 num_interpolations=100,
-                 min_brightness_increase=0.4,
-                 max_brightness_increase=0.7):
+        Args:
+            num_bright_image_variants (int): Number of image variants of varying
+                                             intensity to calculate gradients for.
+            num_interpolations (int): Number of interpolations along the interpolation path.
+            min_brightness_increase (float): Minimum increase in brightness level
+            max_brightness_increase (float): Maximum increase in brightness level
+        """
         self.num_bright_image_variants = num_bright_image_variants
         self.num_interpolations = num_interpolations
         self.min_brightness_increase = min_brightness_increase
         self.max_brightness_increase = max_brightness_increase
 
-    def get_integrated_gradients(self,
-                                 interpolations,
-                                 model,
-                                 class_index,
-                                 num_interpolations,
-                                 baseline,
-                                 img):
+    def get_integrated_gradients(
+        self, interpolations, model, class_index, num_interpolations, baseline, img
+    ):
         """
         Compute Integrated Gradients for a model based
         on the interpolations
 
         Args:
-          interpolations (numpy.ndarray): Interpolations between image
-                                          and baseline image
-          model (tensorflow.python.keras.engine.training.Model): Classification model
-          class_index (numpy.int64): Class index of the target class
-          num_interpolations (int): Number of interpolations
-          baseline (numpy.ndarray): Baseline image
-          img (numpy.ndarray): Target image
-        Return:
-          scaled_integrated_gradients (numpy.ndarray): Integrated Gradients of the
-                                                       model with respect to image
+            interpolations (numpy.ndarray): Interpolations between image
+                                            and baseline image
+            model (tensorflow.python.keras.engine.training.Model): Classification model
+            class_index (numpy.int64): Class index of the target class
+            num_interpolations (int): Number of interpolations
+            baseline (numpy.ndarray): Baseline image
+            img (numpy.ndarray): Target image
         """
         with tf.GradientTape() as tape:
             tape.watch(interpolations)
@@ -57,9 +63,7 @@ class IntegratedGradientsImage(object):
         # Multiplying the difference in the image and the baseline with
         # the computed integrated gradients.
         # Source: Equation 3 in Axiomatic Attribution for Deep Networks
-        scaled_integrated_gradients = (
-          (img - baseline) * (integrated_gradients)
-        )
+        scaled_integrated_gradients = (img - baseline) * (integrated_gradients)
 
         return scaled_integrated_gradients
 
@@ -69,11 +73,8 @@ class IntegratedGradientsImage(object):
         for a given number of steps in the path
 
         Args:
-          img (numpy.ndarray): Target image
-          num_interpolations (int): Number of interpolations
-        Return:
-          interpolations (numpy.ndarray): Interpolations between image & baseline
-          baseline (numpy.ndarray): Baseline image
+            img (numpy.ndarray): Target image
+            num_interpolations (int): Number of interpolations
         """
         baseline = tf.zeros(img.shape[1:])
 
@@ -81,22 +82,26 @@ class IntegratedGradientsImage(object):
         # intervals between the baseline and the input image.
         interpolations = []
         for idx in range(0, num_interpolations + 1):
-            delta = (img - baseline) * (float(idx)/num_interpolations)
+            delta = (img - baseline) * (float(idx) / num_interpolations)
             interpolations.append(baseline + delta)
 
         interpolations = tf.convert_to_tensor(interpolations)
         return interpolations, baseline
 
-    def explain_instance(self, image, preprocessor_with_brightness_fn, model, num_interpolations=None):
+    def explain_instance(
+        self, image, preprocessor_with_brightness_fn, model, num_interpolations=None
+    ):
         """
         Predict the class for an image with the classifier
         and show integrated gradients for that image.
-        
+
         Args:
-          file_path (str): Path to image
+          image (numpy.ndarray): Image to explain
+          preprocessor_with_brightness_fn (Callable): Function to preprocess image, must provide
+                                                      a brightness parameter to change brightness
+                                                      of image.
           model (tensorflow.python.keras.engine.training.Model): Classification model
           num_interpolations (int): Number of interpolations
-          show_variant_images (bool): Show brightness variant images or not
         """
         if num_interpolations is None:
             num_interpolations = self.num_interpolations
@@ -109,15 +114,16 @@ class IntegratedGradientsImage(object):
         for i in range(self.num_bright_image_variants):
             img = preprocessor_with_brightness_fn(
                 image,
-                random.uniform(self.min_brightness_increase, self.max_brightness_increase)
+                random.uniform(
+                    self.min_brightness_increase, self.max_brightness_increase
+                ),
             )
-            interpolations, baseline = self.get_interpolations(img[0], num_interpolations)
-            integrated_gradients = self.get_integrated_gradients(interpolations,
-                                                                 model,
-                                                                 class_index,
-                                                                 num_interpolations,
-                                                                 baseline,
-                                                                 img[0])
+            interpolations, baseline = self.get_interpolations(
+                img[0], num_interpolations
+            )
+            integrated_gradients = self.get_integrated_gradients(
+                interpolations, model, class_index, num_interpolations, baseline, img[0]
+            )
             all_intgrads.append(integrated_gradients)
 
         # Averaging the gradients across the image variants
