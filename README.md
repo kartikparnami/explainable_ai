@@ -60,7 +60,7 @@ Examples of usage of each of these methods can be found in examples/ folder in j
 ##### Integrated Gradients Image Explanation
 ![Integrated Gradients Image Explanation](images/IGImage.png "Integrated Gradients Image Explanation")
 
-Sample text explanations:
+#### Sample text explanations:
 
 ##### Anchor Text Explanation
 ![Anchor Text Explanation](images/AnchorText.png "Anchor Text Explanation")
